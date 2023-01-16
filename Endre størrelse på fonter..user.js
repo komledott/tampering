@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         UU Endre størrelse på fonter. og linjeavstand
+// @name         Universell utforming: Endre størrelse på fonter og avtander.
 // @namespace    http://tampermonkey.net/
 // @version      0.2
-// @description  For å sjekke om teksten går så mye utenfor oppgitte rammer at den ikke blir tilgjengelig.
+// @description  For å sjekke om teksten går så mye utenfor oppgitte rammer at den ikke lenger blir tilgjengelig.
 // @author       Terje Rudi
 // @match        https://*.hvl.no/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=hvl.no
