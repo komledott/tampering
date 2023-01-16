@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UU Endre størrelse på fonter. og linjeavstand
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  For å sjekke om teksten går så mye utenfor oppgitte rammer at den ikke blir tilgjengelig.
 // @author       Terje Rudi
 // @match        https://*.hvl.no/*
@@ -13,14 +13,21 @@
     'use strict';
 
     // Elementer i sida som skal endres med knottene.
-    let targetsList = 'h1, h2, h3, h4, p, time, th, td, ul, li a, label, input, select, .link--footer, .button--footer, .header__english, .button--chat, summary';
+    const targetsList = 'h1, h2, h3, h4, p, time, th, td, ul, li a, label, input, select, .link--footer, .button--footer, .header__english, .button--chat, summary';
+    const factors = {
+        fontSize : 1.5,
+        letterSpacing : .12,
+        wordSpacing : .16,
+        lineHeight : 1.5,
+        paragraphBottom : 2
+    }
 
     function enlargeFont(){
         let targets = document.querySelectorAll(targetsList);
         targets.forEach((e) => {
             let style = window.getComputedStyle(e, null).getPropertyValue('font-size');
             let currentFontSize = parseFloat(style);
-            let newFontSize = Math.ceil(currentFontSize * 1.1);
+            let newFontSize = Math.ceil(currentFontSize * factors.fontSize);
             // Test: e.style.border = 'solid 3px red';
             e.style.fontSize = newFontSize + 'px';
         })
@@ -29,9 +36,9 @@
     function increaseParagraphBottom(){
         let targets = document.querySelectorAll('p');
         targets.forEach((e) => {
-            let style = window.getComputedStyle(e, null).getPropertyValue('margin-bottom');
-            let currentMargin = parseFloat(style);
-            let newMargin = Math.ceil(currentMargin * 1.1);
+            let style = window.getComputedStyle(e, null).getPropertyValue('font-size');
+            let currentFontSize = parseFloat(style);
+            let newMargin = Math.ceil(currentFontSize * factors.paragraphBottom);
             // Test: e.style.border = 'solid 3px red';
             e.style.marginBottom = newMargin + 'px';
         })
@@ -40,9 +47,9 @@
     function enlargeLineHeight(){
         let targets = document.querySelectorAll(targetsList);
         targets.forEach((e) => {
-            let style = window.getComputedStyle(e, null).getPropertyValue('line-height');
-            let currentLineHeight = parseFloat(style);
-            let newLineHeight = Math.ceil(currentLineHeight * 1.1);
+            let style = window.getComputedStyle(e, null).getPropertyValue('font-size');
+            let currentFontSize = parseFloat(style);
+            let newLineHeight = Math.ceil(currentFontSize * factors.lineHeight);
             // Test: e.style.border = 'solid 3px red';
             e.style.lineHeight = newLineHeight + 'px';
         })
@@ -51,11 +58,22 @@
     function increaseSpacing(){
         let targets = document.querySelectorAll(targetsList);
         targets.forEach((e) => {
-            let style = window.getComputedStyle(e, null).getPropertyValue('letter-spacing');
-            let currentLetterSpacing = parseFloat(style);
-            let newLetterSpacing = Math.ceil(currentLetterSpacing * 1.1);
+            let style = window.getComputedStyle(e, null).getPropertyValue('font-size');
+            let currentFontSize = parseFloat(style);
+            let newLetterSpacing = Math.ceil(currentFontSize * factors.letterSpacing);
             // Test: e.style.border = 'solid 3px red';
             e.style.letterSpacing = newLetterSpacing + 'px';
+        })
+    }
+
+    function increaseWordSpacing(){
+        let targets = document.querySelectorAll(targetsList);
+        targets.forEach((e) => {
+            let style = window.getComputedStyle(e, null).getPropertyValue('font-size');
+            let currentFontSize = parseFloat(style);
+            let newWordSpacing = Math.ceil(currentFontSize * factors.wordSpacing);
+            // Test: e.style.border = 'solid 3px red';
+            e.style.wordSpacing = newWordSpacing + 'px';
         })
     }
 
@@ -69,7 +87,7 @@
         btn.style.border = 'solid .2rem #004357';
         btn.style.boxShadow = '.1rem .1rem .2rem rgba(0,0,0,.3)';
         btn.style.marginBottom = '.3rem';
-        btn.innerText = label;
+        btn.innerHTML = label;
         btn.style.cursor = 'pointer';
         return btn;
     }
@@ -86,30 +104,42 @@
 
 
     // Fontforstørrelsesknapp
-    let enlargeBtn = createBtn('Forstørr font');
+    let enlargeBtn = createBtn('Font <sub><big>*</big></sub> ' + factors.fontSize);
     enlargeBtn.addEventListener('click',function(){
         enlargeFont();
+        this.outerHTML = '';
     });
     panel.appendChild(enlargeBtn);
 
     // linjehøydeøkningsknapp
-    let increaseLineHeight = createBtn('Øk linjeavstand');
+    let increaseLineHeight = createBtn('Linjeavstand (fontstr. <sub><big>*</big></sub> ' + factors.lineHeight + ')');
     increaseLineHeight.addEventListener('click',function(){
         enlargeLineHeight();
+        this.outerHTML = '';
     });
     panel.appendChild(increaseLineHeight);
 
     // Økning av mellomrom mellom bokstaver
-    let increaseLetterSpacing = createBtn('Øk spacing');
+    let increaseLetterSpacing = createBtn('Spacing <sub><big>*</big></sub> ' + factors.letterSpacing);
     increaseLetterSpacing.addEventListener('click',function(){
         increaseSpacing();
+        this.outerHTML = '';
     });
     panel.appendChild(increaseLetterSpacing);
 
+    // Økning av mellomrom mellom ord
+    let increaseWordSpace = createBtn('Ordspacing <sub><big>*</big></sub> ' + factors.wordSpacing);
+    increaseWordSpace.addEventListener('click',function(){
+        increaseWordSpacing();
+        this.outerHTML = '';
+    });
+    panel.appendChild(increaseWordSpace);
+
     // Økning av etter avsnitt
-    let increaseParEnd = createBtn('Øk avsnittsbunn');
+    let increaseParEnd = createBtn('Avsnittsbunn (fontstr. <sub><big>*</big></sub> ' + factors.paragraphBottom + ')');
     increaseParEnd.addEventListener('click',function(){
         increaseParagraphBottom();
+        this.outerHTML = '';
     });
     panel.appendChild(increaseParEnd);
 
